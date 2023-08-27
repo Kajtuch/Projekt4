@@ -30,6 +30,7 @@ using namespace std;
 	sf::RectangleShape pietro1();
 	sf::RectangleShape pietro2();
 
+	int ktory_przycisk(float x, float y);											//funkcja sprawdza na którym przycisku mamy aktualnie myszkê
 
 	void narysuj_winde(sf::RenderWindow* okno) {
 		(*okno).draw(lewa_sciana1());												//draw rysuje jakiœ obiekt
@@ -41,9 +42,24 @@ using namespace std;
 		(*okno).draw(pietro2());
 		
 	}
+	void narysuj_interfejs(sf::RenderWindow* okno);
+
+	bool czy_pietro_pe³ne(int* ludzie) {
+		for (int i = 0; i < 6; i++) {
+			if (ludzie[i] == -1) {
+				return false;
+			}	
+		}
+		return true;
+	}
 
 int main() {
+	int wybrany;
 	sf::RenderWindow okno;															//tworzym nasze okno jako obiekt klasy Window z zakresu nazw sf
+	sf::RectangleShape podnosnik;
+	podnosnik.setSize(sf::Vector2f(100, 10));
+	podnosnik.setFillColor(CZERWONY);
+	podnosnik.setPosition(610, 600);
 	okno.create(sf::VideoMode(SZEROKOSC_OKNA, WYSOKOSC_OKNA, 32), "winda");			// tutaj powstaje nasze okno pierwszy argument funkcji to wymiary okna np. "1000, 500," 32 oznacza zakres kolorów. drugi argument to nazwa okna
 	
 	sf::Event input;																//deklaruje zmienn¹ event ktora zawieraæ bêdzie informacje o tym co my robimy (np ruszamy myszk¹)
@@ -53,14 +69,40 @@ int main() {
 		okno.pollEvent(input);														//wywo³anie tej funkcji sprawia ¿e zmienna input wype³niona jest informacjami o eventach
 		system("cls");
 		cout << "X: " << input.mouseMove.x << "  Y: " << input.mouseMove.y;
-
 		if (input.type == sf::Event::Closed) {										//ten if zamyka okno je¿eli klikniesz X w prawym górnym rogu okna
 			okno.close();
 			break;
 		}
+		////////////////////////////////////////////////// obs³uga windy
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&& ktory_przycisk(input.mouseMove.x, input.mouseMove.y)>=0) {
+			if (ktory_przycisk(input.mouseMove.x, input.mouseMove.y) <= 2) {
+				wybrany = ktory_przycisk(input.mouseMove.x, input.mouseMove.y);
+			}
+			else {
+				switch (ktory_przycisk(input.mouseMove.x, input.mouseMove.y)) {
+				case 3: {
+					
+				}
+				case 4: {
 
-		narysuj_winde(&okno);	
-		okno.display();															//metoda odpowiedzialna za wyœwietlanie zmian za ka¿dym razem jak jest wywo³ana daje .
+				}
+				case 5: {
+
+				}
+				default{
+					break;
+				}
+				}
+			}
+		}
+		
+
+
+
+		narysuj_interfejs(&okno);
+		narysuj_winde(&okno);
+		okno.draw(podnosnik);
+		okno.display();																//metoda odpowiedzialna za wyœwietlanie zmian za ka¿dym razem jak jest wywo³ana daje .
 
 	}
 
@@ -115,4 +157,65 @@ sf::RectangleShape pietro2() {
 	sciana.setPosition(700, 210);
 	sciana.setFillColor(CIEMNOSZARY);
 	return sciana;
+}
+void narysuj_interfejs(sf::RenderWindow* okno) {								//ta funkcja tylko rysuje przyciski nie robi nic wiecej
+	int nr_przycisku = 0;
+	sf::Font font;																//aby zapisaæ liczbe potrzeba czcionki
+	if (!font.loadFromFile("arialbd.ttf")) {									// aby pobraæ jak¹œ czcionkê nale¿y j¹ umieœciæ w pliku gdzie jest main.cpp 
+		cout << "\nblad przy pobieraniu czcionki\n";
+	}
+	sf::RectangleShape przycisk;
+	sf::Text liczba;
+	for (int i = 0; i < 6; i++) {
+		przycisk.setSize(sf::Vector2f(100, 100));
+		przycisk.setPosition(100*(i%3), (i/3)*100);
+		przycisk.setFillColor(CIEMNOSZARY);
+		(*okno).draw(przycisk);
+		przycisk.setSize(sf::Vector2f(80, 80));
+		przycisk.setPosition(100 * (i % 3) + 10, (i / 3) * 100 + 10);
+		przycisk.setFillColor(SZARY);
+		(*okno).draw(przycisk);
+		liczba.setFont(font);
+		liczba.setString(to_string(i%3));
+		liczba.setPosition(100 * (i % 3) + 40, (i / 3) * 100 + 25);
+		liczba.setCharacterSize(36);
+		liczba.setFillColor(CZARNY);
+		(*okno).draw(liczba);
+	}
+}
+int ktory_przycisk(float x, float y) {
+	if (x < 0 || y < 0 || x > 300|| y > 200) {
+		return -1;
+	}
+	else {
+		if (x < 100 && y < 100) {
+			return 0;
+		}
+		else {
+			if (x < 200 && y < 100) {
+				return 1;
+			}
+			else {
+				if (x < 300 && y < 100) {
+					return 2;
+				}
+				else {
+					if (x < 100 && y < 200) {
+						return 3;
+					}
+					else {
+						if (x < 200 && y < 200) {
+							return 4;
+						}
+						else {
+							if (x < 300 && y < 200) {
+								return 5;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return -1;
 }
