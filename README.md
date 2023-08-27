@@ -5,7 +5,7 @@ W 92 linijce w main.cpp jest błąd, w switchu nie dałem ":" przy default nie c
 
 Biblioteki znajduja sie w pliku external.
 
-Jak odpalisz program powinno się pojawic to co ci wysłałem, wizualnie nic się chyba nie zmieniło od tego czasu.
+Jak odpalisz program w rozszerzeniu .sln po kompilacji powinno się pojawic to co ci wysłałem, wizualnie nic się chyba nie zmieniło od tego czasu.
 
 do zrobienia jest:
 1. algorytm sterujący windą
