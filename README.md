@@ -1,14 +1,11 @@
 # Projekt4
 
 WAŻNE!!
-w 92 linijce w main.cpp jest błąd, w switchu nie dałem ":" przy default nie chciało mi się już tego pushować
+W 92 linijce w main.cpp jest błąd, w switchu nie dałem ":" przy default nie chciało mi się już tego pushować.
 
-1 odpalasz winda.sln w vs
-2 w pliku winda znajdujesz main.c++
-3 tam piszesz kod
+Biblioteki znajduja sie w pliku external.
 
-biblioteki znajduja sie w pliku external
-jak odpalisz program powinno się pojawic to co ci wysłałem, wizualnie nic się chyba nie zmieniło od tego czasu
+Jak odpalisz program powinno się pojawic to co ci wysłałem, wizualnie nic się chyba nie zmieniło od tego czasu.
 
 do zrobienia jest:
 1. algorytm sterujący windą
