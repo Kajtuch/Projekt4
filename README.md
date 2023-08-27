@@ -1,5 +1,8 @@
 # Projekt4
 
+WAŻNE!!
+w 92 linijce w main.cpp jest błąd, w switchu nie dałem ":" przy default nie chciało mi się już tego pushować
+
 1 odpalasz winda.sln w vs
 2 w pliku winda znajdujesz main.c++
 3 tam piszesz kod
