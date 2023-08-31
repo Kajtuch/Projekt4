@@ -1,12 +1,16 @@
 ﻿  main.cpp
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(68,61): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(68,42): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(70,4): warning C4060: instrukcja switch zawiera etykiety "case" lub "default"
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(145,40): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(145,27): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(149,58): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(149,38): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(154,56): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(154,36): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(169): warning C4715: "ktory_przycisk”: niewszystkie ścieżki kodu zwracają wartość
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(77,102): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(77,83): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(78,57): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(78,38): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(79,64): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(79,45): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(82,62): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(82,43): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(171,40): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(171,27): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(175,58): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(175,38): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(180,56): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(180,36): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
   winda.vcxproj -> C:\Users\Admin\Desktop\proj4\Debug\winda.exe
