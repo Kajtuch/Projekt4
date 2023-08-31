@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+#include <vector>
 
 ////////////////////////////////////////////////
 //Tutaj definiujemy sobie kolory			  //
@@ -19,6 +20,7 @@
 
 const int SZEROKOSC_OKNA = 1500;
 const int WYSOKOSC_OKNA = 750;
+const int PREDKOSC = 50;
 
 using namespace std;
 																					//deklaruje tutaj funkcje buduj¹ce winde i piêtra dla przejrzystoœci zwracaj¹ obiekt bêd¹cy jakimœ prostok¹tem który mo¿na potem namalowaæ
@@ -30,7 +32,7 @@ using namespace std;
 	sf::RectangleShape pietro1();
 	sf::RectangleShape pietro2();
 
-	int ktory_przycisk(float x, float y);											//funkcja sprawdza na którym przycisku mamy aktualnie myszkê
+	int ktory_przycisk(int x, int y);											//funkcja sprawdza na którym przycisku mamy aktualnie myszkê
 
 	void narysuj_winde(sf::RenderWindow* okno) {
 		(*okno).draw(lewa_sciana1());												//draw rysuje jakiœ obiekt
@@ -42,7 +44,12 @@ using namespace std;
 		(*okno).draw(pietro2());
 		
 	}
-	void narysuj_interfejs(sf::RenderWindow* okno);
+	void narysuj_interfejs(sf::RenderWindow* okno, int wybrany);
+
+	void w_dol(int* wysokosc, sf::Clock zegar);
+	void w_gore(int* wysokosc, sf::Clock zegar);
+	
+	int pozycja(int wysokosc);													//funkcja zwraca pietro na ktorym jest teraz podnosnik jesli jest miedzy pietrami zwraca "-1" gdy podnosnik jest pomiedzy 0 a 1 i "-2" gdy jest pomiedzy 1 i 2
 
 	bool czy_pietro_pe³ne(int* ludzie) {
 		for (int i = 0; i < 6; i++) {
@@ -53,45 +60,193 @@ using namespace std;
 		return true;
 	}
 
-int main() {
-	int wybrany;
-	sf::RenderWindow okno;															//tworzym nasze okno jako obiekt klasy Window z zakresu nazw sf
-	sf::RectangleShape podnosnik;
-	podnosnik.setSize(sf::Vector2f(100, 10));
-	podnosnik.setFillColor(CZERWONY);
-	podnosnik.setPosition(610, 600);
-	okno.create(sf::VideoMode(SZEROKOSC_OKNA, WYSOKOSC_OKNA, 32), "winda");			// tutaj powstaje nasze okno pierwszy argument funkcji to wymiary okna np. "1000, 500," 32 oznacza zakres kolorów. drugi argument to nazwa okna
-	
-	sf::Event input;																//deklaruje zmienn¹ event ktora zawieraæ bêdzie informacje o tym co my robimy (np ruszamy myszk¹)
+	int main() {
+		string kierunek = "gora";																//zmienna ma wartosc "gora" lub "dol" w zale¿noœci od tego w ktora strone sie porusza winda
+		int aktualna_pozycja = 0;															//zmienna posiada informacje o tym na ktorym pietrze znajduje sie winda
+		sf::Clock zegar;																//zmienna typu zegar XD
+		int wysokosc = 0;																	//wysokosc na jakiej znajduje siê podnosnik wzgledem spodu szybu windy
+		int wybrany = -1;
+		bool czy_klikniety = false;
+		sf::RenderWindow okno;															//tworzym nasze okno jako obiekt klasy Window z zakresu nazw sf
+		sf::RectangleShape podnosnik;
+		podnosnik.setSize(sf::Vector2f(100, 10));
+		podnosnik.setFillColor(CZERWONY);
+		okno.create(sf::VideoMode(SZEROKOSC_OKNA, WYSOKOSC_OKNA, 32), "winda");			// tutaj powstaje nasze okno pierwszy argument funkcji to wymiary okna np. "1000, 500," 32 oznacza zakres kolorów. drugi argument to nazwa okna
 
+		vector<int> poziom[3];															//tablica 3 elementowa sk³adajaca siê z vektorów typu int zawiera informacje o pasa¿erach na ka¿dym pietrze
+		vector<int> pasazerowie;																//ta tablica zawiera informacje o tym ile i ggdzie jad¹cych pasarzerów znajduje sie na podnoœniku
+
+	sf::Event input;																//deklaruje zmienn¹ event ktora zawieraæ bêdzie informacje o tym co my robimy (np ruszamy myszk¹)
+	
 	while (okno.isOpen()) {															// pêtla wykonuje siê dopóki okno jest otwarte
 		okno.clear(BIALY);															//metoda clear wype³nia ca³e okno kolorem, kolor jest jak¹œ klas¹
 		okno.pollEvent(input);														//wywo³anie tej funkcji sprawia ¿e zmienna input wype³niona jest informacjami o eventach
-		system("cls");
-		cout << "X: " << input.mouseMove.x << "  Y: " << input.mouseMove.y;
+		sf::Vector2i pozycja_myszki = sf::Mouse::getPosition(okno);
 		if (input.type == sf::Event::Closed) {										//ten if zamyka okno je¿eli klikniesz X w prawym górnym rogu okna
 			okno.close();
 			break;
 		}
-		////////////////////////////////////////////////// obs³uga windy
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&& ktory_przycisk(input.mouseMove.x, input.mouseMove.y)>=0) {
-			if (ktory_przycisk(input.mouseMove.x, input.mouseMove.y) <= 2) {
-				wybrany = ktory_przycisk(input.mouseMove.x, input.mouseMove.y);
-			}
-			else {
-				switch (ktory_przycisk(input.mouseMove.x, input.mouseMove.y)) {
-				case 3: {
-					
-				}
-				case 4: {
-
-				}
-				case 5: {
-
-				}
-				default:{
+		/////////////////////////////////////////////////////////////////////////////obs³uga przycisków
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			if (!czy_klikniety) {
+				switch (ktory_przycisk(pozycja_myszki.x, pozycja_myszki.y)) {
+				case 0: {
+					wybrany = 0;
 					break;
 				}
+				case 1: {
+					wybrany = 1;
+					break;
+				}
+				case 2: {
+					wybrany = 2;
+					break;
+				}
+				case 3: {
+					if (wybrany == -1 || wybrany == 0 ) {
+						wybrany = -1;
+						break;
+					}
+					else {
+						poziom[wybrany].push_back(0);
+					}
+					break;
+				}
+				case 4: {
+					if (wybrany == -1 || wybrany == 1 ) {
+						wybrany = -1;
+						break;
+					}
+					else {
+						poziom[wybrany].push_back(1);
+					}
+					break;
+				}
+				case 5: {
+					if (wybrany == -1 || wybrany == 2 ) {
+						wybrany = -1;
+						break;
+					}
+					else {
+						poziom[wybrany].push_back(2);
+					}
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+			}
+			czy_klikniety = true;
+		}
+		else {
+			czy_klikniety = false;
+		}
+		///to pokazuje w konsolce gdzie ile jest ludzi 
+		if (czy_klikniety) {
+			system("cls");
+			cout << "\n poziom 2: ";
+			for (int i = 0; i < poziom[2].size(); i++) {
+				cout << poziom[2][i] << " ";
+			}
+			cout << "\n poziom 1: ";
+			for (int i = 0; i < poziom[1].size(); i++) {
+				cout << poziom[1][i] << " ";
+			}
+			cout << "\n poziom 0: ";
+			for (int i = 0; i < poziom[0].size(); i++) {
+				cout << poziom[0][i] << " ";
+			}
+			cout << "\n winda:";
+			for (int i = 0; i < pasazerowie.size(); i++) {
+				cout << pasazerowie[i] << " ";
+			}
+			cout <<endl<< ktory_przycisk(pozycja_myszki.x, pozycja_myszki.y)<< endl;
+		}
+		///
+		////////////////////////////////////////////////////////////////////////////dzia³anie windy
+		aktualna_pozycja = pozycja(wysokosc);
+		if (aktualna_pozycja < 0) {
+			if (kierunek == "gora") {
+				w_gore(&wysokosc, zegar);
+			}
+			else {
+				w_dol(&wysokosc, zegar);
+			}
+			
+		}
+		else {
+			for (int i = pasazerowie.size()-1;i>=0; i--) {
+				if (pasazerowie[i]==aktualna_pozycja) {
+					pasazerowie.erase(pasazerowie.begin()+i);
+				}
+			}
+			if (kierunek == "gora") {
+				bool zmiana = true;													//je¿eli ta zmienna pozostanie true po wykonaniu pêtli to znaczy ¿e powinien zmienic sie kierunek jazdy windy
+				bool stop = true;
+				for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
+					if (poziom[aktualna_pozycja][i] > aktualna_pozycja && pasazerowie.size()<3) {
+						pasazerowie.push_back(poziom[aktualna_pozycja][i]);
+						poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
+						zmiana = false;
+					}
+				}
+				if (zmiana) {
+					for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
+						if (poziom[aktualna_pozycja][i] < aktualna_pozycja && pasazerowie.size() < 3) {
+							pasazerowie.push_back(poziom[aktualna_pozycja][i]);
+							poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
+							kierunek = "dol";
+						}
+					}
+					stop = false;
+				}
+				if (!stop) {
+
+				}
+				else {
+					if (zmiana) {
+						w_dol(&wysokosc, zegar);
+					}
+					else {
+						w_gore(&wysokosc, zegar);
+					}
+				}
+				
+			}
+			else {
+				if (kierunek == "dol") {
+					bool zmiana = true;													//je¿eli ta zmienna pozostanie true po wykonaniu pêtli to znaczy ¿e powinien zmienic sie kierunek jazdy windy
+					bool stop = true;
+					for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
+						if (poziom[aktualna_pozycja][i] < aktualna_pozycja && pasazerowie.size() < 3) {
+							pasazerowie.push_back(poziom[aktualna_pozycja][i]);
+							poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
+							zmiana = false;
+						}
+					}
+					if (zmiana) {
+						for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
+							if (poziom[aktualna_pozycja][i] > aktualna_pozycja && pasazerowie.size() < 3) {
+								pasazerowie.push_back(poziom[aktualna_pozycja][i]);
+								poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
+								kierunek = "gora";
+							}
+						}
+						stop = false;
+					}
+					if (!stop) {
+
+					}
+					else {
+						if (!zmiana) {
+							w_dol(&wysokosc, zegar);
+						}
+						else {
+							w_gore(&wysokosc, zegar);
+						}
+					}
 				}
 			}
 		}
@@ -99,7 +254,10 @@ int main() {
 
 
 
-		narysuj_interfejs(&okno);
+
+
+		podnosnik.setPosition(610, 600+wysokosc);
+		narysuj_interfejs(&okno,wybrany);
 		narysuj_winde(&okno);
 		okno.draw(podnosnik);
 		okno.display();																//metoda odpowiedzialna za wyœwietlanie zmian za ka¿dym razem jak jest wywo³ana daje .
@@ -158,7 +316,7 @@ sf::RectangleShape pietro2() {
 	sciana.setFillColor(CIEMNOSZARY);
 	return sciana;
 }
-void narysuj_interfejs(sf::RenderWindow* okno) {								//ta funkcja tylko rysuje przyciski nie robi nic wiecej
+void narysuj_interfejs(sf::RenderWindow* okno, int wybrany) {								//ta funkcja tylko rysuje przyciski nie robi nic wiecej
 	int nr_przycisku = 0;
 	sf::Font font;																//aby zapisaæ liczbe potrzeba czcionki
 	if (!font.loadFromFile("arialbd.ttf")) {									// aby pobraæ jak¹œ czcionkê nale¿y j¹ umieœciæ w pliku gdzie jest main.cpp 
@@ -169,7 +327,12 @@ void narysuj_interfejs(sf::RenderWindow* okno) {								//ta funkcja tylko rysuj
 	for (int i = 0; i < 6; i++) {
 		przycisk.setSize(sf::Vector2f(100, 100));
 		przycisk.setPosition(100*(i%3), (i/3)*100);
-		przycisk.setFillColor(CIEMNOSZARY);
+		if (wybrany == i) {
+			przycisk.setFillColor(CZERWONY);
+		}
+		else {
+			przycisk.setFillColor(CIEMNOSZARY);
+		}
 		(*okno).draw(przycisk);
 		przycisk.setSize(sf::Vector2f(80, 80));
 		przycisk.setPosition(100 * (i % 3) + 10, (i / 3) * 100 + 10);
@@ -183,39 +346,86 @@ void narysuj_interfejs(sf::RenderWindow* okno) {								//ta funkcja tylko rysuj
 		(*okno).draw(liczba);
 	}
 }
-int ktory_przycisk(float x, float y) {
-	if (x < 0 || y < 0 || x > 300|| y > 200) {
-		return -1;
-	}
-	else {
-		if (x < 100 && y < 100) {
-			return 0;
+
+
+int ktory_przycisk(int x, int y) {
+
+		if (x < 0 || y < 0 || x > 300 || y > 200) {
+			
+			return -1;
 		}
 		else {
-			if (x < 200 && y < 100) {
-				return 1;
+			if (x < 100 && y < 100) {
+				
+				return 0;
 			}
 			else {
-				if (x < 300 && y < 100) {
-					return 2;
+				if (x < 200 && y < 100) {
+					
+					return 1;
 				}
 				else {
-					if (x < 100 && y < 200) {
-						return 3;
+					if (x < 300 && y < 100) {
+						
+						return 2;
 					}
 					else {
-						if (x < 200 && y < 200) {
-							return 4;
+						if (x < 100 && y < 200) {
+							
+							return 3;
 						}
 						else {
-							if (x < 300 && y < 200) {
-								return 5;
+							if (x < 200 && y < 200) {
+								;
+								return 4;
+							}
+							else {
+								if (x < 300 && y < 200) {
+									
+									return 5;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-	}
 	return -1;
+}
+
+int pozycja(int wysokosc) {
+	if(wysokosc==0){
+		return 0;
+	}
+	else {
+		if (wysokosc < 200) {
+			return -1;
+		}
+		else {
+			if (wysokosc == 200) {
+				return 1;
+			}
+			else {
+				if (wysokosc == 400) {
+					return 2;
+				}
+				else {
+					if (wysokosc > 200) {
+						return -2;
+					}
+				}
+			}
+		}
+	}
+}
+
+void w_gore(int* wysokosc, sf::Clock zegar) {
+	sf::Time uplyw_czasu = zegar.restart();
+	float sekundy = uplyw_czasu.asSeconds();
+	*wysokosc =+ sekundy * PREDKOSC;
+}
+void w_dol(int* wysokosc, sf::Clock zegar) {
+	sf::Time uplyw_czasu = zegar.restart();
+	float sekundy = uplyw_czasu.asSeconds();
+	*wysokosc =- sekundy * PREDKOSC;
 }
