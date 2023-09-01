@@ -20,9 +20,34 @@
 
 const int SZEROKOSC_OKNA = 1500;
 const int WYSOKOSC_OKNA = 750;
-const int PREDKOSC = 50;
+const int PREDKOSC = 1;
 
 using namespace std;
+
+void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Sprite* patyczak2, sf::Sprite* patyczak3, sf::Sprite* patyczak4, int ktory, int y)
+{
+	if (ktory == 1)
+	{
+		(*patyczak1).setPosition(600, y);
+		(*okno).draw(*patyczak1);
+	}
+	else if (ktory == 2)
+	{
+		(*patyczak2).setPosition(600, y);
+		(*okno).draw(*patyczak2);
+	}
+	else if (ktory == 3)
+	{
+		(*patyczak3).setPosition(600, y);
+		(*okno).draw(*patyczak3);
+	}
+	else if (ktory == 4)
+	{
+		(*patyczak4).setPosition(600, y);
+		(*okno).draw(*patyczak4);
+	}
+}
+
 																					//deklaruje tutaj funkcje buduj¹ce winde i piêtra dla przejrzystoœci zwracaj¹ obiekt bêd¹cy jakimœ prostok¹tem który mo¿na potem namalowaæ
 	sf::RectangleShape lewa_sciana1();												//to funkcje zwracaj¹ce jakiœ skonstruowany prostok¹t
 	sf::RectangleShape lewa_sciana2();
@@ -48,21 +73,19 @@ using namespace std;
 
 	void w_dol(int* wysokosc, sf::Clock zegar);
 	void w_gore(int* wysokosc, sf::Clock zegar);
+	void spisywanie(int* spis, string kierunek, vector<int>* poziomy);
 	
 	int pozycja(int wysokosc);													//funkcja zwraca pietro na ktorym jest teraz podnosnik jesli jest miedzy pietrami zwraca "-1" gdy podnosnik jest pomiedzy 0 a 1 i "-2" gdy jest pomiedzy 1 i 2
 
-	bool czy_pietro_pe³ne(int* ludzie) {
-		for (int i = 0; i < 6; i++) {
-			if (ludzie[i] == -1) {
-				return false;
-			}	
-		}
-		return true;
-	}
 
 	int main() {
-		string kierunek = "gora";																//zmienna ma wartosc "gora" lub "dol" w zale¿noœci od tego w ktora strone sie porusza winda
-		int aktualna_pozycja = 0;															//zmienna posiada informacje o tym na ktorym pietrze znajduje sie winda
+		sf::Clock stoper;
+		bool czy_w_kabinie_sa_ludzie = false;
+		int spis_ludzi_na_pietrach[3];												//tablica wype³niona intami oznaczaj¹cymi iloœæ ludzi jad¹cych w tym kierunku co winda na danych pietrach
+		bool czy_sa_ludzie_na_trasie = false;														//zawiera informacje o tym czy wykryto jakis ludzi na trasie windy
+		//int polecenie = 0;																//zmienna zawiera polecenia jakie aktualnie wykonuje winda polecenia to: 0="stop",1="zaladuj",2="wypakuj",3="jedz" 
+		string kierunek = "gora";
+		//int aktualna_pozycja = 0;															//zmienna posiada informacje o tym na ktorym pietrze znajduje sie winda
 		sf::Clock zegar;																//zmienna typu zegar XD
 		int wysokosc = 0;																	//wysokosc na jakiej znajduje siê podnosnik wzgledem spodu szybu windy
 		int wybrany = -1;
@@ -73,12 +96,40 @@ using namespace std;
 		podnosnik.setFillColor(CZERWONY);
 		okno.create(sf::VideoMode(SZEROKOSC_OKNA, WYSOKOSC_OKNA, 32), "winda");			// tutaj powstaje nasze okno pierwszy argument funkcji to wymiary okna np. "1000, 500," 32 oznacza zakres kolorów. drugi argument to nazwa okna
 
+		sf::Texture ludek1;                                                                //textura ludka
+		ludek1.loadFromFile("ludki/1ludek.png");
+		sf::Sprite patyczak1;                                                            //sprite ludka
+		patyczak1.setTexture(ludek1);
+		patyczak1.setScale(sf::Vector2f(0.1, 0.15));
+
+		sf::Texture ludek2;                                                                //textura ludka
+		ludek2.loadFromFile("ludki/2ludek.png");
+		sf::Sprite patyczak2;                                                            //sprite ludka
+		patyczak2.setTexture(ludek2);
+		patyczak2.setScale(sf::Vector2f(0.1, 0.15));
+
+		sf::Texture ludek3;                                                                //textura ludka
+		ludek3.loadFromFile("ludki/3ludek.png");
+		sf::Sprite patyczak3;                                                            //sprite ludka
+		patyczak3.setTexture(ludek3);
+		patyczak3.setScale(sf::Vector2f(0.1, 0.15));
+
+		sf::Texture ludek4;                                                                //textura ludka
+		ludek4.loadFromFile("ludki/4ludek.png");
+		sf::Sprite patyczak4;                                                            //sprite ludka
+		patyczak4.setTexture(ludek4);
+		patyczak4.setScale(sf::Vector2f(0.1, 0.15));
+
+		
+
+
 		vector<int> poziom[3];															//tablica 3 elementowa sk³adajaca siê z vektorów typu int zawiera informacje o pasa¿erach na ka¿dym pietrze
 		vector<int> pasazerowie;																//ta tablica zawiera informacje o tym ile i ggdzie jad¹cych pasarzerów znajduje sie na podnoœniku
 
 	sf::Event input;																//deklaruje zmienn¹ event ktora zawieraæ bêdzie informacje o tym co my robimy (np ruszamy myszk¹)
 	
 	while (okno.isOpen()) {															// pêtla wykonuje siê dopóki okno jest otwarte
+		sf::Time deltaczasu = zegar.restart();
 		okno.clear(BIALY);															//metoda clear wype³nia ca³e okno kolorem, kolor jest jak¹œ klas¹
 		okno.pollEvent(input);														//wywo³anie tej funkcji sprawia ¿e zmienna input wype³niona jest informacjami o eventach
 		sf::Vector2i pozycja_myszki = sf::Mouse::getPosition(okno);
@@ -88,6 +139,7 @@ using namespace std;
 		}
 		/////////////////////////////////////////////////////////////////////////////obs³uga przycisków
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			zegar.restart();
 			if (!czy_klikniety) {
 				switch (ktory_przycisk(pozycja_myszki.x, pozycja_myszki.y)) {
 				case 0: {
@@ -163,100 +215,111 @@ using namespace std;
 				cout << pasazerowie[i] << " ";
 			}
 			cout <<endl<< ktory_przycisk(pozycja_myszki.x, pozycja_myszki.y)<< endl;
+			cout << "wysokosc: " << wysokosc;
 		}
 		///
 		////////////////////////////////////////////////////////////////////////////dzia³anie windy
-		aktualna_pozycja = pozycja(wysokosc);
-		if (aktualna_pozycja < 0) {
-			if (kierunek == "gora") {
+		
+		if (kierunek == "gora") {
+			if (pozycja(wysokosc) < 0) {
 				w_gore(&wysokosc, zegar);
 			}
 			else {
-				w_dol(&wysokosc, zegar);
-			}
-			
-		}
-		else {
-			for (int i = pasazerowie.size()-1;i>=0; i--) {
-				if (pasazerowie[i]==aktualna_pozycja) {
-					pasazerowie.erase(pasazerowie.begin()+i);
-				}
-			}
-			if (kierunek == "gora") {
-				bool zmiana = true;													//je¿eli ta zmienna pozostanie true po wykonaniu pêtli to znaczy ¿e powinien zmienic sie kierunek jazdy windy
-				bool stop = true;
-				for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
-					if (poziom[aktualna_pozycja][i] > aktualna_pozycja && pasazerowie.size()<3) {
-						pasazerowie.push_back(poziom[aktualna_pozycja][i]);
-						poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
-						zmiana = false;
-					}
-				}
-				if (zmiana) {
-					for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
-						if (poziom[aktualna_pozycja][i] < aktualna_pozycja && pasazerowie.size() < 3) {
-							pasazerowie.push_back(poziom[aktualna_pozycja][i]);
-							poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
-							kierunek = "dol";
-						}
-					}
-					stop = false;
-				}
-				if (!stop) {
+				czy_sa_ludzie_na_trasie = false;
+				czy_w_kabinie_sa_ludzie = false;
 
-				}
-				else {
-					if (zmiana) {
-						w_dol(&wysokosc, zegar);
-					}
-					else {
-						w_gore(&wysokosc, zegar);
+				if(pasazerowie.size()>0){
+					for (int i = pasazerowie.size()-1; i >= 0; i--) {
+						if (pasazerowie[i] == pozycja(wysokosc)) {
+							pasazerowie.erase(pasazerowie.begin() + i);
+						}
 					}
 				}
 				
-			}
-			else {
-				if (kierunek == "dol") {
-					bool zmiana = true;													//je¿eli ta zmienna pozostanie true po wykonaniu pêtli to znaczy ¿e powinien zmienic sie kierunek jazdy windy
-					bool stop = true;
-					for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
-						if (poziom[aktualna_pozycja][i] < aktualna_pozycja && pasazerowie.size() < 3) {
-							pasazerowie.push_back(poziom[aktualna_pozycja][i]);
-							poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
-							zmiana = false;
-						}
-					}
-					if (zmiana) {
-						for (int i = poziom[aktualna_pozycja].size() - 1; i >= 0; i--) {
-							if (poziom[aktualna_pozycja][i] > aktualna_pozycja && pasazerowie.size() < 3) {
-								pasazerowie.push_back(poziom[aktualna_pozycja][i]);
-								poziom[aktualna_pozycja].erase(poziom[aktualna_pozycja].begin() + i);
-								kierunek = "gora";
-							}
-						}
-						stop = false;
-					}
-					if (!stop) {
 
-					}
-					else {
-						if (!zmiana) {
-							w_dol(&wysokosc, zegar);
-						}
-						else {
-							w_gore(&wysokosc, zegar);
+				if (pasazerowie.size() < 4 && poziom[pozycja(wysokosc)].size() > 0) {
+					for (int i = poziom[pozycja(wysokosc)].size()-1; i >= 0; i--) {
+						if (poziom[pozycja(wysokosc)][i] > pozycja(wysokosc)) {
+							pasazerowie.push_back(poziom[pozycja(wysokosc)][i]);
+							poziom[pozycja(wysokosc)].erase(poziom[pozycja(wysokosc)].begin() + i);
 						}
 					}
 				}
+
+				spisywanie(spis_ludzi_na_pietrach, kierunek, poziom);
+				for (int i = pozycja(wysokosc); i < 3; i++) {
+					if (spis_ludzi_na_pietrach[i]) {
+						czy_sa_ludzie_na_trasie = true;
+						break;
+					}
+				}
+				for (int i = 0; i < pasazerowie.size(); i++) {
+					if (pasazerowie[i] > pozycja(wysokosc)) {
+						czy_w_kabinie_sa_ludzie = true;
+						break;
+					}
+				}
+				if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
+					kierunek = "dol";
+				}
+				else {
+					w_gore(&wysokosc, zegar);
+				}
+
+			}
+		}
+		else {// kierunek == "dol"
+			if (pozycja(wysokosc) < 0) {
+				w_dol(&wysokosc, zegar);
+			}
+			else {
+				czy_sa_ludzie_na_trasie = false;
+				czy_w_kabinie_sa_ludzie = false;
+				if(pasazerowie.size()>0){
+					for (int i = pasazerowie.size()-1; i >= 0; i--) {
+						if (pasazerowie[i] == pozycja(wysokosc)) {
+							pasazerowie.erase(pasazerowie.begin() + i);
+						}
+					}
+				}
+				
+
+				if (pasazerowie.size() < 4 && poziom[pozycja(wysokosc)].size() > 0) {
+					for (int i = poziom[pozycja(wysokosc)].size()-1; i >= 0; i--) {
+						if (poziom[pozycja(wysokosc)][i] > pozycja(wysokosc)) {
+							pasazerowie.push_back(poziom[pozycja(wysokosc)][i]);
+							poziom[pozycja(wysokosc)].erase(poziom[pozycja(wysokosc)].begin() + i);
+						}
+					}
+				}
+
+				spisywanie(spis_ludzi_na_pietrach, kierunek, poziom);
+				for (int i = pozycja(wysokosc); i < 3; i++) {
+					if (spis_ludzi_na_pietrach[i]) {
+						czy_sa_ludzie_na_trasie = true;
+						break;
+					}
+				}
+				for (int i = 0; i < pasazerowie.size(); i++) {
+					if (pasazerowie[i] < pozycja(wysokosc)) {
+						czy_w_kabinie_sa_ludzie = true;
+						break;
+					}
+				}
+				if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
+					kierunek = "gora";
+				}
+				else {
+					w_dol(&wysokosc, zegar);
+				}
+
 			}
 		}
 		
 
 
-
-
-
-		podnosnik.setPosition(610, 600+wysokosc);
+		wyswietlanie_ludkow(&okno, &patyczak1, &patyczak2, &patyczak3, &patyczak4, pasazerowie.size(), 600 - wysokosc - 70);
+		podnosnik.setPosition(610, (int)(600-wysokosc));
 		narysuj_interfejs(&okno,wybrany);
 		narysuj_winde(&okno);
 		okno.draw(podnosnik);
@@ -419,13 +482,57 @@ int pozycja(int wysokosc) {
 	}
 }
 
+void spisywanie(int* spis, string kierunek, vector<int>* poziomy) {
+	spis[0] = 0;
+	spis[1] = 0;
+	spis[2] = 0;
+	if (kierunek == "gora") {
+		for (int i = 0; i < 3; i++) {
+			if (poziomy[i].size() > 0) {
+				for (int j = poziomy[i].size()-1; j >= 0; j--) {
+					if (i > poziomy[i][j]) {
+						spis[i]++;
+					}
+				}
+			}
+		}
+	}
+	else {
+		for (int i = 0; i < 3; i++) {
+			if (poziomy[i].size() > 0) {
+				for (int j = poziomy[i].size()-1; j >= 0; j--) {
+					if (i < poziomy[i][j]) {
+						spis[i]++;
+					}
+				}
+			}
+		}
+	}
+}
+
 void w_gore(int* wysokosc, sf::Clock zegar) {
-	sf::Time uplyw_czasu = zegar.restart();
-	float sekundy = uplyw_czasu.asSeconds();
-	*wysokosc =+ sekundy * PREDKOSC;
+	zegar.restart();
+	sf::Time delta;
+	int mikrosekundy;
+	while (true) {
+		delta = zegar.getElapsedTime();
+		mikrosekundy = delta.asMicroseconds();
+		if (mikrosekundy > 50) {
+			break;
+		}
+	}
+	*wysokosc = *wysokosc + 1 * PREDKOSC;
 }
 void w_dol(int* wysokosc, sf::Clock zegar) {
-	sf::Time uplyw_czasu = zegar.restart();
-	float sekundy = uplyw_czasu.asSeconds();
-	*wysokosc =- sekundy * PREDKOSC;
+	zegar.restart();
+	sf::Time delta;
+	int mikrosekundy;
+	while (true) {
+		delta = zegar.getElapsedTime();
+		mikrosekundy = delta.asMicroseconds();
+		if (mikrosekundy > 50) {
+			break;
+		}
+	}
+	*wysokosc = *wysokosc - 1 * PREDKOSC;
 }
