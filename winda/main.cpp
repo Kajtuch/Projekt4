@@ -69,7 +69,7 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 		(*okno).draw(pietro2());
 		
 	}
-	void narysuj_interfejs(sf::RenderWindow* okno, int wybrany);
+	void narysuj_interfejs(sf::RenderWindow* okno, int wybrany, vector<int> pasazerowie);
 
 	void w_dol(int* wysokosc, sf::Clock zegar);
 	void w_gore(int* wysokosc, sf::Clock zegar);
@@ -229,14 +229,14 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 				czy_stop = false;
 			}
 		}
-		if (czy_stop && pasazerowie.size() == 0) {
+		if (czy_stop && pasazerowie.size() == 0 && !ludzik_zero) {
 			if (!czy_zegar_zaczal_odmierzac) {
 				zegar.restart();
 				czy_zegar_zaczal_odmierzac = true;
 			}
 			else {
 				if (zegar.getElapsedTime().asSeconds() > 5) {
-					poziom[0].push_back(0);
+					kierunek = "dol";
 					ludzik_zero = true;
 					czy_zegar_zaczal_odmierzac = false;
 				}
@@ -244,8 +244,7 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 		}
 		else {
 			czy_zegar_zaczal_odmierzac = false;
-			if (ludzik_zero) {
-				poziom[0].erase(poziom[0].begin());
+			if (pozycja(wysokosc)==0) {
 				ludzik_zero = false;
 			}
 			if (kierunek == "gora") {
@@ -343,7 +342,7 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 							break;
 						}
 					}
-					if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
+					if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie && !ludzik_zero) {
 						kierunek = "gora";
 					}
 					else {
@@ -359,7 +358,7 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 
 		wyswietlanie_ludkow(&okno, &patyczak1, &patyczak2, &patyczak3, &patyczak4, pasazerowie.size(), 600 - wysokosc - 70);
 		podnosnik.setPosition(610, (int)(600-wysokosc));
-		narysuj_interfejs(&okno,wybrany);
+		narysuj_interfejs(&okno,wybrany,pasazerowie);
 		narysuj_winde(&okno);
 		okno.draw(podnosnik);
 		okno.display();																//metoda odpowiedzialna za wyœwietlanie zmian za ka¿dym razem jak jest wywo³ana daje .
@@ -418,7 +417,7 @@ sf::RectangleShape pietro2() {
 	sciana.setFillColor(CIEMNOSZARY);
 	return sciana;
 }
-void narysuj_interfejs(sf::RenderWindow* okno, int wybrany) {								//ta funkcja tylko rysuje przyciski nie robi nic wiecej
+void narysuj_interfejs(sf::RenderWindow* okno, int wybrany, vector<int> pasazerowie) {								//ta funkcja tylko rysuje przyciski nie robi nic wiecej
 	int nr_przycisku = 0;
 	sf::Font font;																//aby zapisaæ liczbe potrzeba czcionki
 	if (!font.loadFromFile("arialbd.ttf")) {									// aby pobraæ jak¹œ czcionkê nale¿y j¹ umieœciæ w pliku gdzie jest main.cpp 
@@ -446,6 +445,29 @@ void narysuj_interfejs(sf::RenderWindow* okno, int wybrany) {								//ta funkcj
 		liczba.setCharacterSize(36);
 		liczba.setFillColor(CZARNY);
 		(*okno).draw(liczba);
+	}
+	sf::Text Masa;
+	Masa.setFont(font);
+	Masa.setString("Waga pasazerow: " + to_string(((pasazerowie).size()) * 70));
+	Masa.setPosition(600, 10);
+	Masa.setCharacterSize(20);
+	Masa.setFillColor(CZARNY);
+	(*okno).draw(Masa);
+	int x;
+	sf::Text pietra;
+	pietra.setFont(font);
+	pietra.setCharacterSize(30);
+	pietra.setFillColor(CZARNY);
+	for (int i = 0; i < 3; i++) {
+		pietra.setString(to_string(i));
+		if (i % 2 == 0) {
+			x = 800;
+		}
+		else {
+			x = 500;
+		}
+		pietra.setPosition(x, 500-i*200-20);
+		(*okno).draw(pietra);
 	}
 }
 
@@ -508,7 +530,7 @@ int pozycja(int wysokosc) {
 				return 1;
 			}
 			else {
-				if (wysokosc == 400) {
+				if (wysokosc == 390) {
 					return 2;
 				}
 				else {
@@ -527,11 +549,6 @@ void spisywanie(int* spis, string kierunek, vector<int>* poziomy) {
 	spis[2] = 0;
 	for (int i = 0; i < 3; i++) {
 		spis[i]=poziomy[i].size();
-	}
-	if (poziomy[0].size()) {
-		if (poziomy[0][0] == 0) {
-			spis[0]--;
-		}
 	}
 	
 }
