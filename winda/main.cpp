@@ -79,7 +79,9 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 
 
 	int main() {
+		bool ludzik_zero = false;
 		sf::Clock stoper;
+		bool czy_zegar_zaczal_odmierzac = false;
 		bool czy_w_kabinie_sa_ludzie = false;
 		int spis_ludzi_na_pietrach[3];												//tablica wype³niona intami oznaczaj¹cymi iloœæ ludzi jad¹cych w tym kierunku co winda na danych pietrach
 		bool czy_sa_ludzie_na_trasie = false;														//zawiera informacje o tym czy wykryto jakis ludzi na trasie windy
@@ -129,7 +131,8 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 	sf::Event input;																//deklaruje zmienn¹ event ktora zawieraæ bêdzie informacje o tym co my robimy (np ruszamy myszk¹)
 	
 	while (okno.isOpen()) {															// pêtla wykonuje siê dopóki okno jest otwarte
-		sf::Time deltaczasu = zegar.restart();
+		bool czy_stop = true;
+		//sf::Time deltaczasu = zegar.restart();
 		okno.clear(BIALY);															//metoda clear wype³nia ca³e okno kolorem, kolor jest jak¹œ klas¹
 		okno.pollEvent(input);														//wywo³anie tej funkcji sprawia ¿e zmienna input wype³niona jest informacjami o eventach
 		sf::Vector2i pozycja_myszki = sf::Mouse::getPosition(okno);
@@ -195,7 +198,7 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 		else {
 			czy_klikniety = false;
 		}
-		///to pokazuje w konsolce gdzie ile jest ludzi 
+		///tutaj dane w konsolce
 		if (czy_klikniety) {
 			system("cls");
 			cout << "\n poziom 2: ";
@@ -214,107 +217,143 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 			for (int i = 0; i < pasazerowie.size(); i++) {
 				cout << pasazerowie[i] << " ";
 			}
-			cout <<endl<< ktory_przycisk(pozycja_myszki.x, pozycja_myszki.y)<< endl;
-			cout << "wysokosc: " << wysokosc;
+			cout <<endl<<"pozycja: "<< pozycja(wysokosc) << endl;
+			cout << "wysokosc: " << wysokosc<<endl<<"kierunek: "<<kierunek<<endl;
 		}
 		///
 		////////////////////////////////////////////////////////////////////////////dzia³anie windy
+		spisywanie(spis_ludzi_na_pietrach, kierunek, poziom);
 		
-		if (kierunek == "gora") {
-			if (pozycja(wysokosc) < 0) {
-				w_gore(&wysokosc, zegar);
+		for (int i = 0; i < 3; i++) {
+			if (spis_ludzi_na_pietrach[i]!=0) {
+				czy_stop = false;
+			}
+		}
+		if (czy_stop && pasazerowie.size() == 0) {
+			if (!czy_zegar_zaczal_odmierzac) {
+				zegar.restart();
+				czy_zegar_zaczal_odmierzac = true;
 			}
 			else {
-				czy_sa_ludzie_na_trasie = false;
-				czy_w_kabinie_sa_ludzie = false;
-
-				if(pasazerowie.size()>0){
-					for (int i = pasazerowie.size()-1; i >= 0; i--) {
-						if (pasazerowie[i] == pozycja(wysokosc)) {
-							pasazerowie.erase(pasazerowie.begin() + i);
-						}
-					}
+				if (zegar.getElapsedTime().asSeconds() > 5) {
+					poziom[0].push_back(0);
+					ludzik_zero = true;
+					czy_zegar_zaczal_odmierzac = false;
 				}
-				
-
-				if (pasazerowie.size() < 4 && poziom[pozycja(wysokosc)].size() > 0) {
-					for (int i = poziom[pozycja(wysokosc)].size()-1; i >= 0; i--) {
-						if (poziom[pozycja(wysokosc)][i] > pozycja(wysokosc)) {
-							pasazerowie.push_back(poziom[pozycja(wysokosc)][i]);
-							poziom[pozycja(wysokosc)].erase(poziom[pozycja(wysokosc)].begin() + i);
-						}
-					}
-				}
-
-				spisywanie(spis_ludzi_na_pietrach, kierunek, poziom);
-				for (int i = pozycja(wysokosc); i < 3; i++) {
-					if (spis_ludzi_na_pietrach[i]) {
-						czy_sa_ludzie_na_trasie = true;
-						break;
-					}
-				}
-				for (int i = 0; i < pasazerowie.size(); i++) {
-					if (pasazerowie[i] > pozycja(wysokosc)) {
-						czy_w_kabinie_sa_ludzie = true;
-						break;
-					}
-				}
-				if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
-					kierunek = "dol";
-				}
-				else {
+			}
+		}
+		else {
+			czy_zegar_zaczal_odmierzac = false;
+			if (ludzik_zero) {
+				poziom[0].erase(poziom[0].begin());
+				ludzik_zero = false;
+			}
+			if (kierunek == "gora") {
+				if (pozycja(wysokosc) < 0) {
 					w_gore(&wysokosc, zegar);
 				}
-
-			}
-		}
-		else {// kierunek == "dol"
-			if (pozycja(wysokosc) < 0) {
-				w_dol(&wysokosc, zegar);
-			}
-			else {
-				czy_sa_ludzie_na_trasie = false;
-				czy_w_kabinie_sa_ludzie = false;
-				if(pasazerowie.size()>0){
-					for (int i = pasazerowie.size()-1; i >= 0; i--) {
-						if (pasazerowie[i] == pozycja(wysokosc)) {
-							pasazerowie.erase(pasazerowie.begin() + i);
-						}
-					}
-				}
-				
-
-				if (pasazerowie.size() < 4 && poziom[pozycja(wysokosc)].size() > 0) {
-					for (int i = poziom[pozycja(wysokosc)].size()-1; i >= 0; i--) {
-						if (poziom[pozycja(wysokosc)][i] > pozycja(wysokosc)) {
-							pasazerowie.push_back(poziom[pozycja(wysokosc)][i]);
-							poziom[pozycja(wysokosc)].erase(poziom[pozycja(wysokosc)].begin() + i);
-						}
-					}
-				}
-
-				spisywanie(spis_ludzi_na_pietrach, kierunek, poziom);
-				for (int i = pozycja(wysokosc); i < 3; i++) {
-					if (spis_ludzi_na_pietrach[i]) {
-						czy_sa_ludzie_na_trasie = true;
-						break;
-					}
-				}
-				for (int i = 0; i < pasazerowie.size(); i++) {
-					if (pasazerowie[i] < pozycja(wysokosc)) {
-						czy_w_kabinie_sa_ludzie = true;
-						break;
-					}
-				}
-				if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
-					kierunek = "gora";
-				}
 				else {
+					czy_sa_ludzie_na_trasie = false;
+					czy_w_kabinie_sa_ludzie = false;
+
+					if (pasazerowie.size() > 0) {//wypakunek
+						for (int i = pasazerowie.size() - 1; i >= 0; i--) {
+							if (pasazerowie[i] == pozycja(wysokosc)) {
+								pasazerowie.erase(pasazerowie.begin() + i);
+							}
+						}
+					}
+
+
+					if (pasazerowie.size() < 4 && poziom[pozycja(wysokosc)].size() > 0) {//za³adunek
+						for (int i = poziom[pozycja(wysokosc)].size() - 1; i >= 0; i--) {
+							if (poziom[pozycja(wysokosc)][i] > pozycja(wysokosc)) {
+								pasazerowie.push_back(poziom[pozycja(wysokosc)][i]);
+								poziom[pozycja(wysokosc)].erase(poziom[pozycja(wysokosc)].begin() + i);
+							}
+						}
+					}
+
+					if (pasazerowie.size()) {
+						for (int i = 0; i < pasazerowie.size(); i++) {
+							if (pasazerowie[i] > pozycja(wysokosc)) {
+								czy_w_kabinie_sa_ludzie = true;
+							}
+						}
+					}
+
+
+					for (int i = pozycja(wysokosc)+1; i < 3; i++) {
+						if (spis_ludzi_na_pietrach[i]) {
+							czy_sa_ludzie_na_trasie = true;
+							break;
+						}
+					}
+
+					if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
+						kierunek = "dol";
+					}
+					else {
+						w_gore(&wysokosc, zegar);
+					}
+
+				}
+			}
+			else {// kierunek == "dol"
+				if (pozycja(wysokosc) < 0) {
 					w_dol(&wysokosc, zegar);
 				}
+				else {
+					czy_sa_ludzie_na_trasie = false;
+					czy_w_kabinie_sa_ludzie = false;
+					if (pasazerowie.size() > 0) {
+						for (int i = pasazerowie.size() - 1; i >= 0; i--) {
+							if (pasazerowie[i] == pozycja(wysokosc)) {
+								pasazerowie.erase(pasazerowie.begin() + i);
+							}
+						}
+					}
 
+
+					if (pasazerowie.size() < 4 && poziom[pozycja(wysokosc)].size() > 0) {
+						for (int i = poziom[pozycja(wysokosc)].size() - 1; i >= 0; i--) {
+							if (poziom[pozycja(wysokosc)][i] < pozycja(wysokosc)) {
+								pasazerowie.push_back(poziom[pozycja(wysokosc)][i]);
+								poziom[pozycja(wysokosc)].erase(poziom[pozycja(wysokosc)].begin() + i);
+							}
+						}
+					}
+					if (pasazerowie.size()) {
+						for (int i = 0; i < pasazerowie.size(); i++) {
+							if (pasazerowie[i] < pozycja(wysokosc)) {
+								czy_w_kabinie_sa_ludzie = true;
+							}
+						}
+					}
+
+					for (int i = 0; i < pasazerowie.size(); i++) {
+						if (pasazerowie[i] < pozycja(wysokosc)) {
+							czy_w_kabinie_sa_ludzie = true;
+							break;
+						}
+					}
+					for (int i = 0; i < pozycja(wysokosc); i++) {
+						if (spis_ludzi_na_pietrach[i]) {
+							czy_sa_ludzie_na_trasie = true;
+							break;
+						}
+					}
+					if (!czy_w_kabinie_sa_ludzie && !czy_sa_ludzie_na_trasie) {
+						kierunek = "gora";
+					}
+					else {
+						w_dol(&wysokosc, zegar);
+					}
+
+				}
 			}
 		}
+		
 		
 
 
@@ -486,28 +525,15 @@ void spisywanie(int* spis, string kierunek, vector<int>* poziomy) {
 	spis[0] = 0;
 	spis[1] = 0;
 	spis[2] = 0;
-	if (kierunek == "gora") {
-		for (int i = 0; i < 3; i++) {
-			if (poziomy[i].size() > 0) {
-				for (int j = poziomy[i].size()-1; j >= 0; j--) {
-					if (i > poziomy[i][j]) {
-						spis[i]++;
-					}
-				}
-			}
+	for (int i = 0; i < 3; i++) {
+		spis[i]=poziomy[i].size();
+	}
+	if (poziomy[0].size()) {
+		if (poziomy[0][0] == 0) {
+			spis[0]--;
 		}
 	}
-	else {
-		for (int i = 0; i < 3; i++) {
-			if (poziomy[i].size() > 0) {
-				for (int j = poziomy[i].size()-1; j >= 0; j--) {
-					if (i < poziomy[i][j]) {
-						spis[i]++;
-					}
-				}
-			}
-		}
-	}
+	
 }
 
 void w_gore(int* wysokosc, sf::Clock zegar) {

@@ -3,60 +3,61 @@ C:\Users\Admin\Desktop\proj4\winda\main.cpp(31,33): warning C4244: "argument": k
 C:\Users\Admin\Desktop\proj4\winda\main.cpp(36,33): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
 C:\Users\Admin\Desktop\proj4\winda\main.cpp(41,33): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
 C:\Users\Admin\Desktop\proj4\winda\main.cpp(46,33): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(103,40): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(105,40): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(103,35): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(105,35): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(109,40): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(111,40): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(109,35): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(111,35): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(115,40): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(117,40): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(115,35): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(117,35): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(121,40): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(123,40): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(121,35): warning C4305: "argument": obcięcie z "double" do "T"
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(123,35): warning C4305: "argument": obcięcie z "double" do "T"
           with
           [
               T=float
           ]
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(202,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(206,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(210,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(214,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(256,23): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(304,23): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(324,39): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(394,40): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(394,27): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(403,58): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(403,38): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(408,56): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(408,36): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(521,38): warning C4244: "=": konwersja z "sf::Int64" do "int", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(534,38): warning C4244: "=": konwersja z "sf::Int64" do "int", możliwa utrata danych
-C:\Users\Admin\Desktop\proj4\winda\main.cpp(485): warning C4715: "pozycja”: niewszystkie ścieżki kodu zwracają wartość
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(205,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(209,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(213,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(217,22): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(278,25): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(327,25): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(334,24): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(361,39): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(431,40): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(431,27): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(440,58): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(440,38): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(445,56): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(445,36): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(545,38): warning C4244: "=": konwersja z "sf::Int64" do "int", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(558,38): warning C4244: "=": konwersja z "sf::Int64" do "int", możliwa utrata danych
+C:\Users\Admin\Desktop\proj4\winda\main.cpp(522): warning C4715: "pozycja”: niewszystkie ścieżki kodu zwracają wartość
   winda.vcxproj -> C:\Users\Admin\Desktop\proj4\Debug\winda.exe
