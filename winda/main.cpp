@@ -22,6 +22,9 @@ const int SZEROKOSC_OKNA = 1500;
 const int WYSOKOSC_OKNA = 750;
 const int PREDKOSC = 1;
 
+const int XP[3] = { 730, 500, 700 };
+const int YP[3] = { 520 ,320,130 };
+
 using namespace std;
 
 void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Sprite* patyczak2, sf::Sprite* patyczak3, sf::Sprite* patyczak4, int ktory, int y)
@@ -45,6 +48,37 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 	{
 		(*patyczak4).setPosition(600, y);
 		(*okno).draw(*patyczak4);
+	}
+}
+
+void wyswietlanie_ludkow_na_pietrach(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Sprite* patyczak2, sf::Sprite* patyczak3, sf::Sprite* patyczak4, vector<int>* pietro)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (pietro[i].size() == 0)
+		{
+
+		}
+		else if (pietro[i].size() == 1)
+		{
+			(*patyczak1).setPosition(XP[i], YP[i]);
+			(*okno).draw(*patyczak1);
+		}
+		else if (pietro[i].size() == 2)
+		{
+			(*patyczak2).setPosition(XP[i], YP[i]);
+			(*okno).draw(*patyczak2);
+		}
+		else if (pietro[i].size() == 3)
+		{
+			(*patyczak3).setPosition(XP[i], YP[i]);
+			(*okno).draw(*patyczak3);
+		}
+		else if (pietro[i].size() == 4)
+		{
+			(*patyczak4).setPosition(XP[i], YP[i]);
+			(*okno).draw(*patyczak4);
+		}
 	}
 }
 
@@ -357,6 +391,7 @@ void wyswietlanie_ludkow(sf::RenderWindow* okno, sf::Sprite* patyczak1, sf::Spri
 
 
 		wyswietlanie_ludkow(&okno, &patyczak1, &patyczak2, &patyczak3, &patyczak4, pasazerowie.size(), 600 - wysokosc - 70);
+		wyswietlanie_ludkow_na_pietrach(&okno, &patyczak1, &patyczak2, &patyczak3, &patyczak4, poziom);
 		podnosnik.setPosition(610, (int)(600-wysokosc));
 		narysuj_interfejs(&okno,wybrany,pasazerowie);
 		narysuj_winde(&okno);
